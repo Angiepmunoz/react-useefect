@@ -17,31 +17,52 @@ function App() {
   const [today, setToday] = useState({});
   const [vibe, setVibe] = useState("");
 
-  useEffect(()=>{
-    console.log("vibe: ", vibe)
-  }, [vibe])
+  useEffect(() => {
+    console.log("vibe: ", vibe);
+  }, [vibe]);
   // function getData(){
   //   console.log("I am getting data");
   // }
 
+  // when your dependency is an object, you should track a specific value changing as a dependency because whenever objects are updated in react it is ALWAYS a new object
+
+  useEffect(() => {
+    setColor(colors[index]);
+  }, [today.month]);
+
+  function getFeaturedDog() {
+    fetch("https://dog.ceo/api/breeds/image/random")
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log("dog: ", data);
+        setDog(data)
+      })
+      .catch((error) => {
+        console.log("error fetching dog");
+      });
+  }
+
+  useEffect(()=>{
+    getFeaturedDog()
+  },[])
 
   // Because we are updating state in this useEffect if we we do not pass a dependency the webpage will re-render infinitely
-  // Since we only want to update number ONCE, we will pass an empty dependency array 
-  useEffect(()=>{
-    setNumber(Math.random())
-  }, [])
+  // Since we only want to update number ONCE, we will pass an empty dependency array
+  useEffect(() => {
+    setNumber(Math.random());
+  }, []);
 
   // we need this useEffect to run every time the index changes, therefore we passed the state variable index as a dependency
-  useEffect(()=>{
-    console.log(index)
-    setToday(days[index])
-  }, [index])
+  useEffect(() => {
+    console.log(index);
+    setToday(days[index]);
+  }, [index]);
 
   // because this useEffect does not have a dependency, it will run every time the page rerenders
-  // this useEffect isn't handling any state changes and is not dependent on any other variables, therefore does not have dependencies 
-//   useEffect(()=>{
-//     getData()
-// })
+  // this useEffect isn't handling any state changes and is not dependent on any other variables, therefore does not have dependencies
+  //   useEffect(()=>{
+  //     getData()
+  // })
 
   function handleOnChange(event) {
     setVibe(event.target.value);
@@ -78,7 +99,7 @@ function App() {
           <h5>{vibe}</h5>
         </div>
         <div className="dog">
-          <button>Change dog</button>
+          <button onClick={getFeaturedDog}>Change dog</button>
           <h2>Featured dog:</h2>
           <img src={dog.message} alt="Featured Dog" />
         </div>
